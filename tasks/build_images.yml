@@ -34,7 +34,7 @@
     path: "/tmp/{{ item.value.repo|default('') }}/{{ item.value.path|default('') }}"
     state: present
     force: True
-    push: True
+    push: "{{ push_to_docker_hub }}"
     dockerfile: "/tmp/{{ item.value.repo|default('') }}/{{ item.value.image_path|default('') }}/{{ item.key }}.dk"
 
 - name: "Clean up dockerfiles"

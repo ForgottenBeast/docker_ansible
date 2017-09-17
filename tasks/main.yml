@@ -46,6 +46,9 @@
   with_dict: "{{ IMAGE_DATA | combine(MANIFEST_IMAGES) }}"
   when: ansible_architecture == "x86_64" and
         image.key in BUILD and
-        "'multiarch' in image.value.tags"
+        "'multiarch' in image.value.tags" and
+        push_to_docker_hub == True
+        #^ No sense in creating manifests if we can't download
+        #the corresponding images
   loop_control:
     loop_var: image

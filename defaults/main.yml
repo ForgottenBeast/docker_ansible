@@ -1,3 +1,7 @@
+#Should we push new images to dockerhub?
+#
+push_to_docker_hub: True
+#
 ##################################################################################
 #List of images we want to rebuild
 #this list must contain keys from image names and/or manifest_images
