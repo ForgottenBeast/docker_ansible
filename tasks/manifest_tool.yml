@@ -1,0 +1,35 @@
+- name: "Install manifest_tool requirements"
+  apt:
+    name: "{{ item }}"
+    state: installed
+    update_cache: True
+  with_items:
+    - build-essential
+    - python-setuptools
+    - golang
+
+- name: "Install python pip"
+  easy_install:
+    name: pip
+    state: latest
+
+- name: "Install docker-py"
+  pip:
+    name: docker-py
+
+- name: "Push manifest-tool repository"
+  synchronize:
+    src: manifest-tool
+    dest: ./
+
+- name: "Install manifest-tool"
+  shell: |
+    cd manifest-tool
+    make
+    make install
+
+- name: "Remove manifest-tool repository"
+  file:
+    name: manifest-tool
+    state: absent
+    directory_mode: True

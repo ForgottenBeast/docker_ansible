@@ -1,0 +1,7 @@
+FROM {{ item.value.build_params.base_image[ansible_architecture] }}
+RUN apt-get update;\
+    apt-get install -y tor;
+
+EXPOSE 9001
+
+ENTRYPOINT [ "tor", "-f", "/etc/tor/torrc" ]

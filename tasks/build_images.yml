@@ -1,0 +1,55 @@
+- name: "Create dockerfiles from templates without repositories"
+  template:
+    src: "{{ item.key }}.j2"
+    dest: "/tmp/{{ item.key }}.dk"
+         
+- name: "Create run_with_vpn scripts"
+  template:
+    src: run_with_vpn.j2
+    dest: /tmp/run_{{ item.key }}_with_vpn.sh
+    mode: 0764
+  when: item.value.build_params.has_key('vpn')
+
+- name: "Push git repositories"
+  synchronize:
+    src: "{{ item.value.repo }}"
+    dest: /tmp/
+  when: item.value.has_key('repo')
+
+- name: "Move templated Dockerfiles to their repositories"
+  command: mv /tmp/{{ item.key }}.dk \
+           /tmp/{{ item.value.repo }}/{{ item.value.image_path }}/{{ item.key }}.dk
+  when: item.value.has_key('repo')
+
+- name: "Move templated run_with_vpn scripts to their repositories"
+  command: mv /tmp/run_{{ item.key }}_with_vpn.sh \
+           /tmp/{{ item.value.repo }}/{{ item.value.image_path }}/run_{{ item.key }}_with_vpn.sh
+  when: item.value.build_params.has_key('vpn') and
+        item.value.has_key('repo')
+
+- name: "Build images from templates"
+  docker_image:
+    name: "{{ item.value.tags[ansible_architecture] }}"
+    repository: "{{ item.value.tags[ansible_architecture] }}"
+    path: "/tmp/{{ item.value.repo|default('') }}/{{ item.value.path|default('') }}"
+    state: present
+    force: True
+    push: True
+    dockerfile: "/tmp/{{ item.value.repo|default('') }}/{{ item.value.image_path|default('') }}/{{ item.key }}.dk"
+
+- name: "Clean up dockerfiles"
+  file:
+    name: "/tmp/{{ item.key }}.dk"
+    state: absent
+
+- name: "Clean up run_with_vpn scripts"
+  file:
+    name: /tmp/run_{{ item.key }}_with_vpn.sh
+    state: absent
+
+- name: "Clean up repositories"
+  file:
+    name: "/tmp/{{ item.value.repo }}"
+    state: absent
+    directory_mode: True
+  when: item.value.has_key('repo')

@@ -1,0 +1,18 @@
+- name: "Remove old arm images"
+  docker_image:
+    name: "{{ item.value.tags.aarch64 }}"
+    state: absent
+  when: "'aarch64' in BUILD[item.key].tags"
+
+
+- name: "Remove old x86_64 images"
+  docker_image:
+    name: "{{ item.value.tags.x86_64 }}"
+    state: absent
+  when: "'x86_64' in BUILD[item.key].tags"
+
+- name: "Remove old multiarch images"
+  docker_image:
+    name: "{{ item.value.tags.multiarch }}"
+    state: absent
+  when: "'multiarch' in BUILD[item.key].tags"

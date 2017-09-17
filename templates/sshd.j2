@@ -1,0 +1,16 @@
+FROM {{ item.value.build_params.base_image[ansible_architecture] }}
+
+RUN rm /bin/su;\
+    apk update;\
+    apk add openssh;\
+    ssh-keygen -A;\
+    {% for user, pw in item.value.build_params.logins.iteritems() %}
+    adduser -D -s /bin/ash {{ user }};\
+    chmod 700 /home/{{ user }};\
+    echo '{{ user }}:{{ pw }}'|chpasswd;\
+    {% endfor %}
+    echo "done!"
+
+EXPOSE 22
+
+ENTRYPOINT ["/usr/sbin/sshd", "-D"]

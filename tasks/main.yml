@@ -1,0 +1,51 @@
+- name: "Install ansible docker requirements"
+  include: ansible_docker_requirements.yml
+  become: True
+  tags: always
+
+- name: "Install docker"
+  include: requirements.yml
+  become: True
+  tags: docker_all_install
+
+- name: "Log into DockerHub"
+  tags: always
+  become: True
+  docker_login:
+    username: "{{ docker_login.user }}"
+    password: "{{ docker_login.password' }}"
+    email: "{{ docker_login.email }}"
+
+- name: "Clean docker images"
+  include: clean_docker_images.yml
+  become: True
+  tags: 'clean'
+  with_dict: "{{ IMAGE_DATA | combine(MANIFEST_IMAGES) }}"
+  when: item.key in BUILD
+
+- name: "Build images"
+  include: build_images.yml
+  become: True
+  tags: 'images'
+  with_dict: "{{ IMAGE_DATA }}"
+  when: item.key in BUILD and
+        ansible_architecture in BUILD[item.key].tags and
+        item.value.tags.has_key(ansible_architecture)
+
+- name: "Pull images"
+  include: docker_pull.yml
+  become: True
+  tags:
+    - 'pull'
+    - 'multiarch'
+  with_dict: "{{ IMAGE_DATA | combine(MANIFEST_IMAGES) }}"
+
+- name: "Build manifests"
+  include: build_manifests.yml
+  tags: 'multiarch'
+  with_dict: "{{ IMAGE_DATA | combine(MANIFEST_IMAGES) }}"
+  when: ansible_architecture == "x86_64" and
+        image.key in BUILD and
+        "'multiarch' in image.value.tags"
+  loop_control:
+    loop_var: image

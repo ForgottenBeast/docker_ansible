@@ -1,0 +1,11 @@
+image: {{ image.value.tags.multiarch }}
+manifests:
+  - image: {{ image.value.tags.aarch64 }}
+    platform:
+      architecture: arm64
+      os: linux
+
+  - image: {{ image.value.tags.x86_64 }}
+    platform:
+      architecture: amd64
+      os: linux

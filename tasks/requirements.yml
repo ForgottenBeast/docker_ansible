@@ -1,0 +1,11 @@
+- include: docker_install.yml
+  become: True
+  when: inventory_hostname not in rancher_machines 
+  tags:
+    - docker_install
+
+- include: manifest_tool.yml
+  become: True
+  when: ansible_architecture == 'x86_64'
+  tags:
+    - manifest_install

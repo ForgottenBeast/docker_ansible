@@ -1,0 +1,118 @@
+##################################################################################
+#List of images we want to rebuild
+#this list must contain keys from image names and/or manifest_images
+#and tags specify which tag to build
+#if tags are added here they must also have a corresponding repo everywhere else
+BUILD:
+  motioneye:
+    tags:
+      - aarch64
+      - multiarch
+
+
+##################################################################################
+#images made by other peoples that we want to combine
+#into multi arch images
+#or when we only build part of them locally
+#
+########################### WARNING #####################################
+#IF YOU CREATE DIFFERENT TAGS ENTRIES IN MANIFEST_IMAGES AND
+#IMAGE DATA FOR A SAME KEY ONLY THE ONE IN MANIFEST_IMAGES WILL BE USED
+MANIFEST_IMAGES:
+  alpine:
+    tags:
+      x86_64: alpine
+      aarch64: hypriot/rpi-alpine
+      multiarch: forgottenbeast/alpine:multiarch
+  vpn:
+    tags:
+      x86_64: kylemanna/openvpn
+      aarch64: forgottenbeast/vpn:aarch64
+      multiarch: forgottenbeast/vpn:multiarch
+
+##################################################################################
+#images that are built only from a template: they dont have or need
+#a repository to draw from
+IMAGE_DATA:
+#ssh bastion
+  sshd:
+    tags:
+      x86_64: forgottenbeast/ssh:x86_64
+      aarch64: forgottenbeast/ssh:aarch64
+      multiarch: forgottenbeast/ssh:multiarch
+
+    build_params:
+      base_image:
+        x86_64: "alpine:latest"
+        aarch64: "hypriot/rpi-alpine"
+      logins: "{{ vault_sshd_logins }}"
+#logins are as follow:
+#      logins:
+#        toto: 'pwd'
+#        tata: 'zozor'
+
+  tord:
+    tags:
+      x86_64: forgottenbeast/tor:x86_64
+      aarch64: forgottenbeast/tor:aarch64
+      multiarch: forgottenbeast/tor:multiarch
+
+    build_params:
+      base_image:
+        x86_64: "debian:latest"
+        aarch64: "resin/rpi-raspbian"
+
+  zncd:
+    tags:
+      x86_64: forgottenbeast/znc:x86_64
+      aarch64: forgottenbeast/znc:aarch64
+      multiarch: forgottenbeast/znc:multiarch
+    build_params:
+      base_image:
+        x86_64: "alpine:latest"
+        aarch64: "hypriot/rpi-alpine"
+      command: su zncDude -c "znc --foreground"
+      vpn: True
+
+  transmd:
+    tags:
+      x86_64: forgottenbeast/transm:x86_64
+      aarch64: forgottenbeast/transm:aarch64
+      multiarch: forgottenbeast/transm:multiarch
+    build_params:
+      base_image:
+        x86_64: "alpine:latest"
+        aarch64: "hypriot/rpi-alpine"
+      command: "transmission-daemon -f -g  /etc/transmission"
+      vpn: True
+
+  motioneye:
+    #repository folder name
+    repo: motioneye
+
+    #where to run docker build from, relative to folder root
+    path: .
+
+    #where the dockerfile should be relative to folder root
+    image_path: extra 
+
+    build_params:
+      base_image:
+        x86_64: "ubuntu:15.04"
+        aarch64: "cyrhenry/rpi-ubuntu:xenial"
+
+    tags:
+      x86_64: forgottenbeast/motioneye:x86_64
+      aarch64: forgottenbeast/motioneye:aarch64
+      multiarch: forgottenbeast/motioneye:multiarch
+
+  vpnd:
+    repo: docker-openvpn
+    image_path: . 
+    path: .
+    tags:
+      aarch64: forgottenbeast/vpn:aarch64
+    build_params:
+      base_image:
+        x86_64: "alpine:latest"
+        aarch64: "hypriot/rpi-alpine"
