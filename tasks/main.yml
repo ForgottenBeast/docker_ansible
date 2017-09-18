@@ -13,7 +13,7 @@
   become: True
   docker_login:
     username: "{{ docker_login.user }}"
-    password: "{{ docker_login.password' }}"
+    password: "{{ docker_login.password }}"
     email: "{{ docker_login.email }}"
 
 - name: "Clean docker images"

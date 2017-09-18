@@ -1,11 +1,23 @@
+- name: "Check if docker is installed"
+  command: which docker
+  register: docker_installed
+  ignore_errors: True
+  tags: docker_install
+
 - include: docker_install.yml
   become: True
-  when: inventory_hostname not in rancher_machines 
+  when: docker_installed|failed
   tags:
     - docker_install
 
+- name: "Check if manifest-tool is installed"
+  command: which manifest-tool
+  register: manif_installed
+  ignore_errors: True
+  tags: manifest_install
+
 - include: manifest_tool.yml
   become: True
-  when: ansible_architecture == 'x86_64'
+  when: ansible_architecture == 'x86_64' and manif_installed|failed
   tags:
     - manifest_install
