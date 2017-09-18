@@ -11,10 +11,7 @@
 - name: "Log into DockerHub"
   tags: always
   become: True
-  docker_login:
-    username: "{{ docker_login.user }}"
-    password: "{{ docker_login.password }}"
-    email: "{{ docker_login.email }}"
+  command: docker login -u {{ docker_login.user }} -p {{ docker_login.password }}
 
 - name: "Clean docker images"
   include: clean_docker_images.yml

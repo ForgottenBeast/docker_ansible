@@ -49,7 +49,7 @@ IMAGE_DATA:
       base_image:
         x86_64: "alpine:latest"
         aarch64: "hypriot/rpi-alpine"
-      logins: "{{ vault_sshd_logins }}"
+#      logins: "{{ vault_sshd_logins }}"
 #logins are as follow:
 #      logins:
 #        toto: 'pwd'
