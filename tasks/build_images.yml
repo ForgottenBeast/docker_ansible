@@ -10,7 +10,8 @@
     src: run_with_vpn.j2
     dest: /tmp/run_{{ item.key }}_with_vpn.sh
     mode: 0764
-  when: item.value.build_params.has_key('vpn')
+  when: item.value.has_key('build_params') and 
+        item.value.build_params.has_key('vpn')
 
 - name: "Push git repositories"
   synchronize:
@@ -28,8 +29,9 @@
 - name: "Move templated run_with_vpn scripts to their repositories"
   command: mv /tmp/run_{{ item.key }}_with_vpn.sh \
            /tmp/{{ item.value.repo }}/{{ item.value.image_path }}/run_{{ item.key }}_with_vpn.sh
-  when: item.value.build_params.has_key('vpn') and
-        item.value.has_key('repo')
+  when: item.value.has_key('build_params') and (
+        item.value.build_params.has_key('vpn') and
+        item.value.has_key('repo'))
 
 - name: "Build images from templates"
   docker_image:
