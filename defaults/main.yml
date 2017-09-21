@@ -111,6 +111,9 @@ IMAGE_DATA:
       multiarch: forgottenbeast/motioneye:multiarch
 
   vpnd:
+    #notemplate means everything is in the repository, no template used
+    #so probably not multiarch viable
+    notemplate: True
     repo: docker-openvpn
     image_path: . 
     path: .
