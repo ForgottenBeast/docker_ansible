@@ -73,8 +73,8 @@ IMAGE_DATA:
       multiarch: forgottenbeast/znc:multiarch
     build_params:
       base_image:
-        x86_64: "alpine:latest"
-        aarch64: "hypriot/rpi-alpine"
+        x86_64: "debian:latest"
+        aarch64: "resin/rpi-raspbian"
       command: su zncDude -c "znc --foreground"
       vpn: True
 
@@ -85,8 +85,8 @@ IMAGE_DATA:
       multiarch: forgottenbeast/transm:multiarch
     build_params:
       base_image:
-        x86_64: "alpine:latest"
-        aarch64: "hypriot/rpi-alpine"
+        x86_64: "debian:latest"
+        aarch64: "resin/rpi-raspbian"
       command: "transmission-daemon -f -g  /etc/transmission"
       vpn: True
 

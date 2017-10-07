@@ -1,13 +1,13 @@
 FROM {{ item.value.build_params.base_image[ansible_architecture] }}
-RUN apk update;\
-    apk add transmission-daemon
+RUN apt update;\
+    apt install -y transmission-daemon
 
 
 EXPOSE 51413
 EXPOSE 9091
 
 {% if item.value.build_params.has_key('vpn') and item.value.build_params.vpn == True %}
-RUN apk add openvpn bash
+RUN apt install -y openvpn 
 COPY run_{{ item.key }}_with_vpn.sh /bin/run_{{ item.key }}_with_vpn.sh
 ENTRYPOINT run_{{ item.key }}_with_vpn.sh
 
