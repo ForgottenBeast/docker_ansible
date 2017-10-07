@@ -1,7 +1,7 @@
 FROM {{ item.value.build_params.base_image[ansible_architecture] }}
 RUN apt update;\
     apt install -y znc;\
-    adduser --disabled-password zncDude --shell /bin/bash ;
+    useradd zncDude;
  
 
 EXPOSE 5000
