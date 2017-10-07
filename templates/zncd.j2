@@ -7,7 +7,8 @@ RUN apt update;\
 EXPOSE 5000
 
 {% if item.value.build_params.has_key('vpn') and item.value.build_params.vpn == True %}
-RUN apt install -y openvpn resolvconf
+RUN echo "resolvconf resolvconf/linkify-resolvconf boolean false" | debconf-set-selections
+RUN apt install -y openvpn resolvconf iptables
 COPY run_{{ item.key }}_with_vpn.sh /bin/run_{{ item.key }}_with_vpn.sh
 ENTRYPOINT run_{{ item.key }}_with_vpn.sh
 
