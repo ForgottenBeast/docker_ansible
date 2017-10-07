@@ -11,5 +11,5 @@
     name: "{{ item.value.tags.x86_64 }}"
     state: present
     force: True
-  when: item.key in BUILD or
-        inventory_hostname == "127.0.0.1"
+  when: item.key in BUILD and
+        inventory_hostname == "localhost"
