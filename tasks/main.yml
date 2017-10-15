@@ -9,7 +9,11 @@
   tags: docker_all_install
 
 - name: "Log into DockerHub"
-  tags: always
+  tags:
+    - images
+    - multiarch
+    - pull
+    - clean
   become: True
   command: docker login -u {{ docker_login.user }} -p {{ docker_login.password }}
 
