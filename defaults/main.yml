@@ -38,6 +38,13 @@ MANIFEST_IMAGES:
 #images that are built only from a template: they dont have or need
 #a repository to draw from
 IMAGE_DATA:
+  jenkins_docker:
+    tags:
+      x86_64: forgottenbeast/jenkins_docker:x86_64
+    repo: jenkins_docker
+    path: .
+    image_path: .
+        
 #ssh bastion
   sshd:
     tags:
