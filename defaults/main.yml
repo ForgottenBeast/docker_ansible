@@ -44,7 +44,14 @@ IMAGE_DATA:
     repo: jenkins_docker
     path: .
     image_path: .
-        
+
+  jenkins_slave_docker:
+    tags:
+      x86_64: forgottenbeast/jenkins_slave_docker:x86_64
+    repo: jenkins_slave_docker
+    path: .
+    image_path: .
+     
 #ssh bastion
   sshd:
     tags:
