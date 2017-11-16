@@ -20,7 +20,7 @@
 - name: "Clean docker images"
   include: clean_docker_images.yml
   become: True
-  tags: 'clean'
+  tags: clean
   with_dict: "{{ IMAGE_DATA | combine(MANIFEST_IMAGES) }}"
   when: item.key in BUILD
 

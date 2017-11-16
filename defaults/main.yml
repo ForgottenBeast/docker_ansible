@@ -39,6 +39,7 @@ MANIFEST_IMAGES:
 #a repository to draw from
 IMAGE_DATA:
   jenkins_docker:
+    notemplate: True
     tags:
       x86_64: forgottenbeast/jenkins_docker:x86_64
     repo: jenkins_docker
@@ -46,6 +47,7 @@ IMAGE_DATA:
     image_path: .
 
   jenkins_slave_docker:
+    notemplate: True
     tags:
       x86_64: forgottenbeast/jenkins_slave_docker:x86_64
     repo: jenkins_slave_docker
