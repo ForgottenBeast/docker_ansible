@@ -7,3 +7,6 @@
 [submodule "files/manifest-tool"]
 	path = files/manifest-tool
 	url = https://github.com/estesp/manifest-tool.git
+[submodule "files/nginx_modsecurity"]
+	path = files/nginx_modsecurity
+	url = https://github.com/theonemule/docker-waf.git
