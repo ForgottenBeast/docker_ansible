@@ -25,7 +25,7 @@
   when: item.key in BUILD
 
 - name: "Build images"
-  include: build_images.yml
+  include_tasks: build_images.yml
   become: True
   tags: 'images'
   with_dict: "{{ IMAGE_DATA }}"
