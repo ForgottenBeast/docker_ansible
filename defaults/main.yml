@@ -41,6 +41,7 @@ IMAGE_DATA:
 
 #ssh bastion
   sshd:
+    push_to_docker_hub: False
     tags:
       x86_64: forgottenbeast/ssh:x86_64
       aarch64: forgottenbeast/ssh:aarch64
