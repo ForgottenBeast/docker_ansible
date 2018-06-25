@@ -1,61 +1,43 @@
-- name: "Create dockerfiles from templates without repositories"
-  tags: 'images'
-  template:
-    src: "{{ item.key }}.j2"
-    dest: "/tmp/{{ item.key }}.dk"
-  when: not item.value.has_key('notemplate') or
-        item.value.notemplate == False
-         
-- name: "Push git repositories"
-  tags: 'images'
-  synchronize:
-    src: "{{ item.value.repo }}"
-    dest: /tmp/
-  when: item.value.has_key('repo')
-
-- name: "Move templated Dockerfiles to their repositories"
-  tags: 'images'
-  command: mv /tmp/{{ item.key }}.dk \
-           /tmp/{{ item.value.repo }}/{{ item.value.image_path }}/{{ item.key }}.dk
-  when: item.value.has_key('repo') and
-        (not item.value.has_key('notemplate') or
-          item.value.notemplate == False )
-
-- name: "Move templated run_with_vpn scripts to their repositories"
-  tags: 'images'
-  command: mv /tmp/run_{{ item.key }}_with_vpn.sh \
-           /tmp/{{ item.value.repo }}/{{ item.value.image_path }}/run_{{ item.key }}_with_vpn.sh
-  when: item.value.has_key('build_params') and (
-        item.value.build_params.has_key('vpn') and
-        item.value.has_key('repo'))
-
-- name: "Build images from templates"
-  tags: 'images'
-  docker_image:
-    name: "{{ item.value.tags[ansible_architecture] }}"
-    repository: "{{ item.value.tags[ansible_architecture] }}"
-    path: "/tmp/{{ item.value.repo|default('')|regex_replace('(^[^/]+/)+([^/]+)$','\\2') }}/{{ item.value.path|default('')}}"
-    state: present
-    force: True
-    push: "{{ push_to_docker_hub }}"
-    dockerfile: "/tmp/{{ item.value.repo|default('')|regex_replace('(^[^/]+/)+([^/]+)$','\\2') }}/{{ item.value.image_path|default('') }}/{{ item.key }}.dk"
-
-- name: "Clean up dockerfiles"
-  tags: 'images'
-  file:
-    name: "/tmp/{{ item.key }}.dk"
-    state: absent
-
-- name: "Clean up run_with_vpn scripts"
-  tags: 'images'
-  file:
-    name: /tmp/run_{{ item.key }}_with_vpn.sh
-    state: absent
-
-- name: "Clean up repositories"
-  tags: 'images'
-  file:
-    name: "/tmp/{{ item.value.repo }}"
-    state: absent
-    directory_mode: True
-  when: item.value.has_key('repo')
+block:
+  - name: "Create dockerfiles from templates without repositories"
+    template:
+      src: "{{ item.key }}.j2"
+      dest: "/tmp/{{ item.key }}.dk"
+    when: not item.value.has_key('notemplate') or
+          item.value.notemplate == False
+           
+  - name: "Push git repositories"
+    synchronize:
+      src: "{{ item.value.repo }}"
+      dest: /tmp/
+    when: item.value.has_key('repo')
+  
+  - name: "Move templated Dockerfiles to their repositories"
+    command: mv /tmp/{{ item.key }}.dk \
+             /tmp/{{ item.value.repo }}/{{ item.value.image_path }}/{{ item.key }}.dk
+    when: item.value.has_key('repo') and
+          (not item.value.has_key('notemplate') or
+            item.value.notemplate == False )
+  
+  - name: "Build images from templates"
+    docker_image:
+      name: "{{ item.value.tags[ansible_architecture] }}"
+      repository: "{{ item.value.tags[ansible_architecture] }}"
+      path: "/tmp/{{ item.value.repo|default('')|regex_replace('(^[^/]+/)+([^/]+)$','\\2') }}/{{ item.value.path|default('')}}"
+      state: present
+      force: True
+      push: "{{ push_to_docker_hub }}"
+      dockerfile: "/tmp/{{ item.value.repo|default('')|regex_replace('(^[^/]+/)+([^/]+)$','\\2') }}/{{ item.value.image_path|default('') }}/{{ item.key }}.dk"
+  
+  - name: "Clean up dockerfiles"
+    file:
+      name: "/tmp/{{ item.key }}.dk"
+      state: absent
+  
+  - name: "Clean up repositories"
+    file:
+      name: "/tmp/{{ item.value.repo }}"
+      state: absent
+      directory_mode: True
+    when: item.value.has_key('repo')
+tags: "images"
