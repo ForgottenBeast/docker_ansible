@@ -34,4 +34,3 @@
     name: docker-ce
     update_cache: yes
     state: installed
-

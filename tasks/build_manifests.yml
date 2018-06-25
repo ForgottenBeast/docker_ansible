@@ -1,14 +1,16 @@
-- name: "Create manifest files from template"
-  template:
-    src: manifest.j2
-    dest: /tmp/manifest_{{ image.key }}.yml
-
-- name: "Push multiarch images"
-  shell: manifest-tool push from-spec /tmp/manifest_{{ image.key }}.yml
-
-- name: "Clean up manifests"
-  file:
-    name: "{{ item }}"
-    state: absent
-  with_fileglob:
-    - "/tmp/manifest_*.yml"
+- block:
+  - name: "Create manifest files from template"
+    template:
+      src: manifest.j2
+      dest: /tmp/manifest_{{ image.key }}.yml
+  
+  - name: "Push multiarch images"
+    shell: manifest-tool push from-spec /tmp/manifest_{{ image.key }}.yml
+  
+  - name: "Clean up manifests"
+    file:
+      name: "{{ item }}"
+      state: absent
+    with_fileglob:
+      - "/tmp/manifest_*.yml"
+  tags: 'multiarch'

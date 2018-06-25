@@ -1,15 +1,19 @@
-- name: "Pull arm images"
-  docker_image:
-    name: "{{ item.value.tags.aarch64 }}"
-    state: present
-    force: True
-  when: ansible_architecture == "aarch64"
-        or item.key in BUILD
-
-- name: "Pull x86_64 images"
-  docker_image:
-    name: "{{ item.value.tags.x86_64 }}"
-    state: present
-    force: True
-  when: item.key in BUILD and
-        inventory_hostname == "localhost"
+- block:
+  - name: "Pull arm images"
+    docker_image:
+      name: "{{ item.value.tags.aarch64 }}"
+      state: present
+      force: True
+    when: ansible_architecture == "aarch64"
+          or item.key in BUILD
+  
+  - name: "Pull x86_64 images"
+    docker_image:
+      name: "{{ item.value.tags.x86_64 }}"
+      state: present
+      force: True
+    when: item.key in BUILD and
+          inventory_hostname == "localhost"
+  tags:
+    - 'pull'
+    - 'multiarch'

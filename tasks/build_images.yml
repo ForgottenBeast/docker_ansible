@@ -1,4 +1,4 @@
-block:
+- block:
   - name: "Create dockerfiles from templates without repositories"
     template:
       src: "{{ item.key }}.j2"
@@ -40,4 +40,4 @@ block:
       state: absent
       directory_mode: True
     when: item.value.has_key('repo')
-tags: "images"
+  tags: "images"

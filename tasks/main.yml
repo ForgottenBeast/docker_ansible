@@ -1,10 +1,10 @@
 - name: "Install ansible docker requirements"
-  include: ansible_docker_requirements.yml
+  import_tasks: ansible_docker_requirements.yml
   become: True
   tags: always
 
 - name: "Install docker"
-  include: requirements.yml
+  import_tasks: requirements.yml
   become: True
   tags: docker_all_install
 
@@ -18,7 +18,7 @@
   command: docker login -u {{ docker_login.user }} -p {{ docker_login.password }}
 
 - name: "Clean docker images"
-  include: clean_docker_images.yml
+  include_tasks: clean_docker_images.yml
   become: True
   tags: clean
   with_dict: "{{ IMAGE_DATA | combine(MANIFEST_IMAGES) }}"
@@ -34,7 +34,7 @@
         item.value.tags.has_key(ansible_architecture)
 
 - name: "Pull images"
-  include: docker_pull.yml
+  include_tasks: docker_pull.yml
   become: True
   tags:
     - 'pull'
@@ -42,7 +42,7 @@
   with_dict: "{{ IMAGE_DATA | combine(MANIFEST_IMAGES) }}"
 
 - name: "Build manifests"
-  include: build_manifests.yml
+  include_tasks: build_manifests.yml
   tags: 'multiarch'
   with_dict: "{{ IMAGE_DATA | combine(MANIFEST_IMAGES) }}"
   when: ansible_architecture == "x86_64" and
